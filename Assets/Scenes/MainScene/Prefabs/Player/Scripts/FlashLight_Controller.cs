@@ -7,7 +7,7 @@ using UnityEngine.Rendering.Universal;
 
 public class FlashLight_Controller : MonoBehaviourPunCallbacks
 {
-    public int targetTime = 7;
+    public int targetTime = 60;
     int remainingTime;
     int time = 1;
     GameObject Flashlight;
@@ -15,10 +15,12 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        Flashlight = transform.Find("Player_FlashLight").gameObject;
+        Light = Flashlight.GetComponent<Light2D>();
+
         if (photonView.IsMine) 
         {
-            Flashlight = transform.Find("Player_FlashLight").gameObject;
-            Light = Flashlight.GetComponent<Light2D>();
+            
             ResetTime(); //starts the timer
         }
     }
@@ -57,7 +59,7 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
 
         else 
         {
-            photonView.RPC("LoseBattery", RpcTarget.AllBuffered, gameObject.transform.parent.gameObject.name);  //if the timer hits zero lose some battery
+            photonView.RPC("LoseBattery", RpcTarget.AllBufferedViaServer, gameObject.transform.parent.gameObject.name);  //if the timer hits zero lose some battery
         }
     }
 
@@ -65,13 +67,13 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
     public void LoseBattery(string name)   
     {
         GameObject player = GameObject.Find(name);
-        //if (Light.pointLightOuterAngle > 0)
-        //{
+        if (Light.pointLightOuterAngle > 0)
+        {
             Debug.Log("THIS PLAYER LOSES BATTERY: " + player.name);
-            //player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius -= 0.25f;
-            //player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle -= 30;        //subtracts the light's angle and distance
-            //player.GetComponent<Player_UI_Manager>().ChangeSprite(); //changes the battery UI
-        //}
+            player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius -= 0.25f;
+            player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle -= 30;        //subtracts the light's angle and distance
+            player.GetComponent<Player_UI_Manager>().ChangeSprite(); //changes the battery UI
+        }
         ResetTime();
     }
 
