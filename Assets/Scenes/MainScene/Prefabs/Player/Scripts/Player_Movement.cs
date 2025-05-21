@@ -31,7 +31,7 @@ public class Player_Movement : MonoBehaviourPunCallbacks
             float moveHorizontal = Input.GetAxis("Horizontal");
             float moveVertical = Input.GetAxis("Vertical");
 
-            rb2d.velocity = new Vector2(((moveHorizontal * speed) * Time.deltaTime) * 30f, ((moveVertical * speed) * Time.deltaTime)*30f); //leave this for now
+            rb2d.velocity = new Vector2(((moveHorizontal * speed) * Time.deltaTime) * 90f, ((moveVertical * speed) * Time.deltaTime)*90f); //leave this for now
 
             // Try out this delta time method??
             //rb2d.transform.position += new Vector3(speed * Time.deltaTime, 0.0f, 0.0f);

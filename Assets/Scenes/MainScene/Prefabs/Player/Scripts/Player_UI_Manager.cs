@@ -34,7 +34,8 @@ public class Player_UI_Manager : MonoBehaviourPunCallbacks
 
     public void ResetSprite()
     {
-        
+        num = 0;
+        Battery.sprite = Battery_Sprites[num];
     }
 
     // Update is called once per frame

@@ -52,14 +52,17 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(time);
         if (remainingTime > 0)
         {
-            remainingTime -= time;
-            Debug.Log("Time Left: " + remainingTime);
-            StartCoroutine(CountDown());
+                remainingTime -= time;
+                Debug.Log("Time Left: " + remainingTime);
+                StartCoroutine(CountDown());   
         }
+
+
 
         else 
         {
             photonView.RPC("LoseBattery", RpcTarget.AllBufferedViaServer, gameObject.transform.parent.gameObject.name);  //if the timer hits zero lose some battery
+            yield break;
         }
     }
 
@@ -77,9 +80,21 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
         ResetTime();
     }
 
-    void ResetBattery()
+    [PunRPC]
+     void resetBattery(string name)
     {
-                                                        //Resets the flashlight to full power
+        Debug.Log("Hello!!!");
+        GameObject player = GameObject.Find(name);
+        player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius = 3.0f;
+        player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle = 90;
+        player.GetComponent<Player_UI_Manager>().ResetSprite();
+        remainingTime = targetTime;
+                                                                                                                            //Resets the flashlight to full power
+    }
+
+    public void ResetBattery(string name)
+    {
+        photonView.RPC("resetBattery", RpcTarget.AllViaServer, name);
     }
 
 

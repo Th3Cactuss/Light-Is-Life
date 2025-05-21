@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
-public class Recharge_Manager : MonoBehaviour
+public class Recharge_Manager : MonoBehaviourPunCallbacks
 {
     // Start is called before the first frame update
     void Start()
@@ -18,9 +19,11 @@ public class Recharge_Manager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
-        {
-
+            if (collision.CompareTag("Player"))
+            {
+                Debug.Log("Brian O'DOnnel");        //Finds the player and calls the function to reset battery
+                collision.gameObject.transform.Find("Player_Light").gameObject.GetComponent<FlashLight_Controller>().ResetBattery(collision.gameObject.name);
+            }
         }
     }
-}
+

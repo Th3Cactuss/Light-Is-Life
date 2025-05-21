@@ -15,7 +15,7 @@ public class Player_Spawner : MonoBehaviourPunCallbacks
     void Start()
     {
        PTM = gameObject.GetComponent<PhotonTeamsManager>();
-       GameObject TempPlayer = PhotonNetwork.Instantiate("Player", new Vector3(0, -2, 0), Quaternion.identity); //Spawns Player
+       GameObject TempPlayer = PhotonNetwork.Instantiate("Player", new Vector3(-20, -2, 0), Quaternion.identity); //Spawns Player
        TempPlayer.GetComponent<Player_Name_Manager>().Temp();
     }
 
