@@ -20,8 +20,7 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
 
         if (photonView.IsMine) 
         {
-            
-            ResetTime(); //starts the timer
+            photonView.RPC("SetBattery", RpcTarget.AllBufferedViaServer, gameObject.transform.parent.gameObject.name); //sets the battery sprite
         }
     }
 
@@ -53,7 +52,6 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
         if (remainingTime > 0)
         {
                 remainingTime -= time;
-                Debug.Log("Time Left: " + remainingTime);
                 StartCoroutine(CountDown());   
         }
 
@@ -67,23 +65,29 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
+    public void SetBattery(string name)
+    {
+        GameObject player = GameObject.Find(name);
+        player.GetComponent<Player_UI_Manager>().SetSprite(); //changes the battery UI
+        ResetTime(); //starts the timer
+    }
+
+    [PunRPC]
     public void LoseBattery(string name)   
     {
         GameObject player = GameObject.Find(name);
         if (Light.pointLightOuterAngle > 0)
         {
-            Debug.Log("THIS PLAYER LOSES BATTERY: " + player.name);
             player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius -= 0.25f;
             player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle -= 30;        //subtracts the light's angle and distance
             player.GetComponent<Player_UI_Manager>().ChangeSprite(); //changes the battery UI
         }
         ResetTime();
-    }
+    }   
 
     [PunRPC]
      void resetBattery(string name)
     {
-        Debug.Log("Hello!!!");
         GameObject player = GameObject.Find(name);
         player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius = 3.0f;
         player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle = 90;

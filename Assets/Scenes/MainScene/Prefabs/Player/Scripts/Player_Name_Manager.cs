@@ -5,11 +5,13 @@ using Photon.Pun;
 using TMPro;
 using Unity.VisualScripting;
 
-public class Player_Name_Manager : MonoBehaviourPunCallbacks, IPunObservable
+public class Player_Name_Manager : MonoBehaviourPunCallbacks, IPunObservable, IDataPersistance
 {
     public string PlayerId;
 
     public TextMeshProUGUI nametag;
+
+    public bool gameInitialized;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,9 +26,10 @@ public class Player_Name_Manager : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     public void SetId()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && gameInitialized != true)
         {
             PlayerId = PhotonNetwork.LocalPlayer.UserId;
+            gameInitialized = true;
         }
     }
 
@@ -34,7 +37,7 @@ public class Player_Name_Manager : MonoBehaviourPunCallbacks, IPunObservable
     void Update()
     {
         gameObject.name = PlayerId;
-        nametag.text = PlayerId;
+        nametag.text = gameObject.name;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -48,5 +51,21 @@ public class Player_Name_Manager : MonoBehaviourPunCallbacks, IPunObservable
         {
             this.PlayerId = (string)stream.ReceiveNext();
         }
+    }
+
+    public void LoadData(GameData data)
+    {
+        this.gameInitialized = data.gameInitialized;
+
+        if (this.gameInitialized == true)
+        {
+            this.PlayerId = data.PlayerName;
+        }
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.PlayerName = this.PlayerId;
+        data.gameInitialized = this.gameInitialized;
     }
 }

@@ -1,8 +1,9 @@
-using System.Collections;
+  using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Test_Wandering_Script : MonoBehaviour
+public class Test_Wandering_Script : MonoBehaviourPunCallbacks
 {
     public int speed;
     public Vector2 TimeRange;
@@ -12,7 +13,12 @@ public class Test_Wandering_Script : MonoBehaviour
 
     void Start()
     {
-        ChooseDirection();
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("ChooseDirection", RpcTarget.AllViaServer);
+            //ChooseDirection();
+        }
+        
     }
 
     // Update is called once per frame
@@ -25,16 +31,16 @@ public class Test_Wandering_Script : MonoBehaviour
 
         else
         {
-            ChooseDirection();
+            photonView.RPC("ChooseDirection", RpcTarget.AllViaServer);
         }
 
         gameObject.GetComponent<Rigidbody2D>().velocity = Direction * speed;
     }
 
+    [PunRPC]
     void ChooseDirection()
     {
         float num = Random.Range(0, 90);
-        Debug.Log("NUM: " + num);
         float x = num;
         float y = 90 - num;
 
@@ -44,7 +50,6 @@ public class Test_Wandering_Script : MonoBehaviour
         xDirection *= xDirection;
         yDirection *= yDirection;
 
-        Debug.Log("Nums: " + xDirection + " " + yDirection);
 
         int rand = Random.Range(0, 2);
 
