@@ -49,6 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetTime: 60
+  lightLength: 0
+  lightAngle: 0
 --- !u!114 &164948173152266234
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,8 +10,15 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
     public int targetTime = 60;
     int remainingTime;
     int time = 1;
+
+    public float lightLength;
+    public float lightAngle;
+
     GameObject Flashlight;
+
     Light2D Light;
+
+    public List<Ray> FlashLightColliders;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,17 +36,41 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine)
         {
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 5.23f;
-
-            Vector3 objectPos = Camera.main.WorldToScreenPoint(transform.position);   // Rotates the camera to face the mouse
-            mousePos.x = mousePos.x - objectPos.x;
-            mousePos.y = mousePos.y - objectPos.y;
-
-            float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+            FlashLightRotation();
+            RayRotation();
         }
         
+    }
+
+    void FlashLightRotation()
+    {
+        Vector3 mousePos = Input.mousePosition;
+
+        Vector3 objectPos = Camera.main.WorldToScreenPoint(gameObject.transform.parent.transform.position);   // Rotates the light to face the mouse
+
+        mousePos.x = objectPos.x - mousePos.x;
+        mousePos.y = objectPos.y - mousePos.y;
+
+        float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 90));
+    }
+
+    void RayRotation()
+    {
+        float angle = gameObject.transform.rotation.z;
+
+        float angleRadians = angle * Mathf.Rad2Deg;
+
+        float x = Mathf.Cos(angleRadians);
+        float y = Mathf.Sin(angleRadians);
+
+        Vector3 TargetPosition = new Vector3(x, y, 0);
+
+        Vector3 FinalPosition = gameObject.transform.position + TargetPosition;
+
+        Debug.Log(angleRadians + "   " + FinalPosition);
+
+        Debug.DrawRay(gameObject.transform.position, FinalPosition, Color.blue);
     }
     void ResetTime()
     {
@@ -80,6 +111,10 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
         {
             player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius -= 0.25f;
             player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle -= 30;        //subtracts the light's angle and distance
+
+            this.lightLength = player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius;
+            this.lightAngle = player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle;
+
             player.GetComponent<Player_UI_Manager>().ChangeSprite(); //changes the battery UI
         }
         ResetTime();
@@ -91,6 +126,11 @@ public class FlashLight_Controller : MonoBehaviourPunCallbacks
         GameObject player = GameObject.Find(name);
         player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius = 3.0f;
         player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle = 90;
+
+
+        this.lightLength = player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterRadius;
+        this.lightAngle = player.transform.Find("Player_Light").GetComponent<FlashLight_Controller>().Light.pointLightOuterAngle;
+
         player.GetComponent<Player_UI_Manager>().ResetSprite();
         remainingTime = targetTime;
                                                                                                                             //Resets the flashlight to full power
