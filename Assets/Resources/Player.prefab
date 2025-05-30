@@ -49,6 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetTime: 60
+  lightLength: 0
+  lightAngle: 0
 --- !u!114 &164948173152266234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,6 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerId: 
   nametag: {fileID: 0}
+  gameInitialized: 0
 --- !u!61 &7832252018767957693
 BoxCollider2D:
   m_ObjectHideFlags: 0
