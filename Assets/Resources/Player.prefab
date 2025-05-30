@@ -399,6 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerId: 
   nametag: {fileID: 0}
+  gameInitialized: 0
 --- !u!61 &7832252018767957693
 BoxCollider2D:
   m_ObjectHideFlags: 0
